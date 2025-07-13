@@ -1,3 +1,4 @@
+/*jshint esversion: 8 */
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -6,31 +7,31 @@ const cors = require('cors');
 const app = express();
 const port = 3030;
 
-// Enable CORS  to allow requests from frontend
+// Enable CORS
 app.use(cors());
 
-// Use built-in JSON parser instead of express.raw
+// Use built-in JSON parser
 app.use(express.json());
 
 // Read data files into memory
-const reviews_data = JSON.parse(fs.readFileSync("reviews.json", 'utf8'));
-const dealerships_data = JSON.parse(fs.readFileSync("dealerships.json", 'utf8'));
+const reviews_data = JSON.parse(fs.readFileSync('reviews.json', 'utf8'));
+const dealerships_data = JSON.parse(fs.readFileSync('dealerships.json', 'utf8'));
 
-// Connect to MongoDB running inside Docker container named "mongo_db"
-mongoose.connect("mongodb://mongo_db:27017/", { 'dbName': 'dealershipsDB' });
+// Connect to MongoDB inside Docker container named "mongo_db"
+mongoose.connect('mongodb://mongo_db:27017/', { dbName: 'dealershipsDB' });
 
 // Import mongoose models
 const Reviews = require('./review');
 const Dealerships = require('./dealership');
 
 // Insert initial data on startup (clear old data first)
-(async () => {
+(async function () {
   try {
     await Reviews.deleteMany({});
-    await Reviews.insertMany(reviews_data['reviews']);
+    await Reviews.insertMany(reviews_data.reviews);
 
     await Dealerships.deleteMany({});
-    await Dealerships.insertMany(dealerships_data['dealerships']);
+    await Dealerships.insertMany(dealerships_data.dealerships);
 
     console.log('Initial data loaded into MongoDB');
   } catch (error) {
@@ -41,8 +42,8 @@ const Dealerships = require('./dealership');
 // -------------------- ROUTES --------------------
 
 // Home route
-app.get('/', async (req, res) => {
-  res.send("Welcome to the Mongoose API");
+app.get('/', (req, res) => {
+  res.send('Welcome to the Mongoose API');
 });
 
 // Fetch ALL reviews
@@ -85,7 +86,7 @@ app.get('/fetchDealers/:state', async (req, res) => {
   }
 });
 
-//  Fetch dealer by id
+// Fetch dealer by id
 app.get('/fetchDealer/:id', async (req, res) => {
   try {
     const document = await Dealerships.findOne({ id: parseInt(req.params.id) });
@@ -102,18 +103,18 @@ app.post('/insert_review', async (req, res) => {
 
     // Get the highest id and increment
     const documents = await Reviews.find().sort({ id: -1 });
-    let new_id = documents.length > 0 ? documents[0]['id'] + 1 : 1;
+    const new_id = documents.length > 0 ? documents[0].id + 1 : 1;
 
     const review = new Reviews({
-      "id": new_id,
-      "name": data['name'],
-      "dealership": data['dealership'],
-      "review": data['review'],
-      "purchase": data['purchase'],
-      "purchase_date": data['purchase_date'],
-      "car_make": data['car_make'],
-      "car_model": data['car_model'],
-      "car_year": data['car_year'],
+      id: new_id,
+      name: data.name,
+      dealership: data.dealership,
+      review: data.review,
+      purchase: data.purchase,
+      purchase_date: data.purchase_date,
+      car_make: data.car_make,
+      car_model: data.car_model,
+      car_year: data.car_year
     });
 
     const savedReview = await review.save();
@@ -124,9 +125,7 @@ app.post('/insert_review', async (req, res) => {
   }
 });
 
-// Start the zzzz Express server
+// Start the server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log('Server is running on http://localhost:' + port);
 });
-
-//app js .
