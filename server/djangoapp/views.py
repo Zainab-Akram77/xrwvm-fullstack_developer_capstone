@@ -69,9 +69,15 @@ def registration(request):
             email=email
         )
         login(request, user)
-        return JsonResponse({"userName": username, "status": "Authenticated"})
+        return JsonResponse({
+            "userName": username,
+            "status": "Authenticated"
+        })
     else:
-        return JsonResponse({"userName": username, "error": "Already Registered"})
+        return JsonResponse({
+            "userName": username,
+            "error": "Already Registered"
+        })
 
 
 def get_dealerships(request, state="All"):
@@ -80,14 +86,20 @@ def get_dealerships(request, state="All"):
     else:
         endpoint = "/fetchDealers/" + state
     dealerships = get_request(endpoint)
-    return JsonResponse({"status": 200, "dealers": dealerships})
+    return JsonResponse({
+        "status": 200,
+        "dealers": dealerships
+    })
 
 
 def get_dealer_details(request, dealer_id):
     if dealer_id:
         endpoint = "/fetchDealer/" + str(dealer_id)
         dealership = get_request(endpoint)
-        return JsonResponse({"status": 200, "dealer": dealership})
+        return JsonResponse({
+            "status": 200,
+            "dealer": dealership
+        })
     else:
         return JsonResponse({
             "status": 400,
@@ -121,7 +133,10 @@ def get_dealer_reviews(request, dealer_id):
             response = analyze_review_sentiments(review_detail['review'])
             print(response)
             review_detail['sentiment'] = response.get('label', 'neutral')
-        return JsonResponse({"status": 200, "reviews": reviews})
+        return JsonResponse({
+            "status": 200,
+            "reviews": reviews
+        })
     else:
         return JsonResponse({
             "status": 400,
