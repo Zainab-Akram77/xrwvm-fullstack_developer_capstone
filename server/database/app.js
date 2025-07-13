@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 const port = 3030;
 
-// Enable CORS zzzzzzzz to allow requests from frontend
+// Enable CORS  to allow requests from frontend
 app.use(cors());
 
 // Use built-in JSON parser instead of express.raw
